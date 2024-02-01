@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context.xsd
+     http://www.springframework.org/schema/util
+     http://www.springframework.org/schema/util/spring-util.xsd
+     http://www.springframework.org/schema/mvc
+     http://www.springframework.org/schema/mvc/spring-mvc.xsd
+    http://www.springframework.org/schema/tx 
+    http://www.springframework.org/schema/tx/spring-tx.xsd">
+     
+     
+     <!--  dispatcher servlet will ask Ioc for the controller so that ds can look for its mapping// IOc will check the ?? what ?  -->
+     
+     <context:component-scan base-package="com.raghav.empManagespring"></context:component-scan>
+     <context:annotation-config></context:annotation-config> 
+     
+     <!-- enables, most of the annotaion  based configuration, in this case autowire -->
+     
+     <!-- lets do the loose coupling of the path (path includes the location with the file extentions too, which we have to loosly coupled with your application's handler methods )where we have our view components(view pages) -->
+    
+  	
+     <!-- enables @Trascational annotaion. -->
+    <tx:annotation-driven/>
+    
+ 
+     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" name="viewResolver">
+     
+     <property name="prefix" value="WEB-INF/views/"/>
+     <property name="suffix" value=".jsp"/>
+     
+     
+     </bean>
+     
+     
+     
+     
+   <!--  these are the 4 properties DriverManagerDataSource class to return dataSource's object  -->
+   
+ 
+   
+<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" name="ds">
+<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+<property name="username" value="nraghav"/>
+<property name="password" value="raghav123"/>
+
+</bean>
+
+
+
+<!--  and now lets inject the datasource object into JdbcTemplate class, so that using JdbcTemplate class's object , we can perform CRUD operations  -->
+     
+     
+     <bean class="org.springframework.jdbc.core.JdbcTemplate" name="jdbcTemplate">
+     
+     <property name="dataSource">
+     
+     <ref bean="ds"/>
+     
+     </property>
+     
+     </bean>
+     
+    
+  
+     <bean  class="org.springframework.orm.hibernate5.LocalSessionFactoryBean" name="sf">
+     
+     <property name="dataSource" ref="ds"></property>
+     
+     <property name="hibernateProperties">
+     
+     <props>
+     
+     <prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
+     <prop key="hibernate.show_sql">true</prop>
+     <prop key="hibernate.hbm2ddl.auto">update</prop>
+     
+     </props>
+     
+     </property>
+     
+     
+     <property name="annotatedClasses">
+     <list>
+     
+     <value>com.raghav.empManagespring.Employee</value>
+     
+     </list>
+     
+     </property>
+     
+     </bean>
+     
+     
+     
+     <bean class="org.springframework.orm.hibernate5.HibernateTemplate" name="hibernateTemplate">
+     
+     <property name="sessionFactory" ref="sf"></property>
+     
+     
+     </bean>
+     
+     <!--  
+     <bean class="com.raghav.empManagespring.Utilityconnection " name="utilityconn" autowire="byName">
+     
+     
+     </bean>
+     -->
+     
+    
+      <bean class="com.raghav.empManagespring.DBConnection " name="dbconnection">
+   
+      </bean>
+      
+    
+    
+     
+     
+    <bean class="org.springframework.orm.hibernate5.HibernateTransactionManager" name="transactionManager">
+   
+    <property name="sessionFactory" ref="sf"></property>
+    
+    
+    </bean>
+     
+     
+     
+     </beans>
